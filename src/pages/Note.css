@@ -1,0 +1,11 @@
+.custom-btn-wrapper {
+  margin-top: 20px;
+  padding-bottom: 50px;
+  text-align: center;
+}
+.custom-text-area {
+  height: 100px;
+}
+.custom-text-area .textarea-wrapper-inner {
+  height: 100%;
+}
