@@ -4,8 +4,5 @@
   text-align: center;
 }
 .custom-text-area {
-  height: 100px;
-}
-.custom-text-area .textarea-wrapper-inner {
-  height: 100%;
+  height: 200px;
 }
