@@ -5,7 +5,17 @@ const sayings = [
   "신뢰의 이유는 안전하거나 확실해서가 아니라, 위험을 감수할 용의가 있어서이다.",
 ];
 
-export const returnSaying = () => {
-  const randomNumber = Math.floor(Math.random() * sayings.length);
-  return sayings[randomNumber];
+export const getSaying = (storedSaying: any) => {
+  if (storedSaying) {
+    let loop = true;
+    while (loop) {
+      const randomNumber = Math.floor(Math.random() * sayings.length);
+      if (sayings[randomNumber] !== storedSaying) {
+        return sayings[randomNumber];
+      }
+    }
+  } else {
+    const randomNumber = Math.floor(Math.random() * sayings.length);
+    return sayings[randomNumber];
+  }
 };
