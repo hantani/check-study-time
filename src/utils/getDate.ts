@@ -14,5 +14,5 @@ export const getDate = () => {
     date = "0" + date;
   }
 
-  return `${year}-${month}-${date} (${day})`;
+  return `${year}-${month}-${date}`;
 };

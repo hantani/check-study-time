@@ -14,38 +14,18 @@ import {
   IonModal,
 } from "@ionic/react";
 import "./Note.css";
-import { useCallback, useState, useRef } from "react";
+import { useState, useRef, useReducer } from "react";
 import WiseSaying from "../components/WiseSaying";
-
-interface initialDateObj {
-  ampm: string;
-  day: number;
-  hour: number;
-  minute: number;
-  month: number;
-  year: number;
-}
-
-const initialDateObj = {
-  ampm: "",
-  day: 0,
-  hour: 0,
-  minute: 0,
-  month: 0,
-  year: 0,
-};
-
-const calculateTime = (startDate: initialDateObj, endDate: initialDateObj) => {
-  console.log(startDate, endDate);
-};
+import { reducer, initialDateObj } from "../reducer/dateReducer";
+import { useStorage } from "../hooks/useStorage";
 
 const Note: React.FC = () => {
   const [subject, setSubject] = useState();
   const [textarea, setTextarea] = useState();
-  const [startDate, setStartDate] = useState<initialDateObj>(initialDateObj);
-  const [endDate, setEndDate] = useState<initialDateObj>(initialDateObj);
   const startDateRef = useRef<any>();
   const endDateRef = useRef<any>();
+  const [state, dispatch] = useReducer(reducer, initialDateObj);
+  const { todayStudyTime } = useStorage();
 
   const onSubjectChange = (e: any) => {
     setSubject(e.target.value);
@@ -54,29 +34,37 @@ const Note: React.FC = () => {
     setTextarea(e.target.value);
   };
   const onAdd = () => {
-    if (startDateRef.current.value === undefined) {
+    if (
+      startDateRef.current.value === undefined &&
+      endDateRef.current.value === undefined
+    ) {
       const defaultParts = startDateRef.current.defaultParts;
-      setStartDate({
-        ampm: defaultParts.ampm,
-        day: defaultParts.day,
-        hour: defaultParts.hour,
-        minute: defaultParts.minute,
-        month: defaultParts.month,
-        year: defaultParts.year,
-      });
+      dispatch({ type: "BOTH_DEFAULT", defaultParts });
     }
-    // if (endDateRef.current.value === undefined) {
-    //   const defaultParts = endDateRef.current.defaultParts;
-    //   setEndDate({
-    //     ampm: defaultParts.ampm,
-    //     day: defaultParts.day,
-    //     hour: defaultParts.hour,
-    //     minute: defaultParts.minute,
-    //     month: defaultParts.month,
-    //     year: defaultParts.year,
-    //   });
-    // }
-    // calculateTime(startDate, endDate);
+    if (
+      startDateRef.current.value === undefined &&
+      endDateRef.current.value !== undefined
+    ) {
+      const defaultParts = startDateRef.current.defaultParts;
+      const endDateValue = endDateRef.current.value;
+      dispatch({ type: "STARTDATE_DEFAULT", defaultParts, endDateValue });
+    }
+    if (
+      startDateRef.current.value !== undefined &&
+      endDateRef.current.value === undefined
+    ) {
+      const defaultParts = endDateRef.current.defaultParts;
+      const startDateValue = startDateRef.current.value;
+      dispatch({ type: "ENDDATE_DEFAULT", defaultParts, startDateValue });
+    }
+    if (
+      startDateRef.current.value !== undefined &&
+      endDateRef.current.value !== undefined
+    ) {
+      const startDateValue = startDateRef.current.value;
+      const endDateValue = endDateRef.current.value;
+      dispatch({ type: "BOTH_VALUE", startDateValue, endDateValue });
+    }
   };
 
   return (
@@ -88,7 +76,7 @@ const Note: React.FC = () => {
       </IonHeader>
       <IonContent className="ion-padding">
         <WiseSaying></WiseSaying>
-        <p className="custom-heading">공부시간 노트</p>
+        <p className="custom-heading">공부시간 기록</p>
         <IonList>
           <IonItem>
             <IonLabel>시작 시간</IonLabel>
@@ -126,11 +114,18 @@ const Note: React.FC = () => {
             ></IonTextarea>
           </IonItem>
         </IonList>
+        {state.warning === true && (
+          <p className="custom-warning">
+            시간 입력이 잘못되었습니다 다시 입력해주세요
+          </p>
+        )}
         <div className="custom-btn-wrapper">
           <IonButton color="primary" onClick={onAdd}>
             추가하기
           </IonButton>
         </div>
+        <p className="custom-heading">오늘의 공부시간</p>
+        <p>{todayStudyTime}</p>
       </IonContent>
     </>
   );

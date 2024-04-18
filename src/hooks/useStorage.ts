@@ -5,12 +5,13 @@ import { getSaying } from "../utils/getSaying";
 
 const TODAY_KEY = "today";
 const SAYING_KEY = "saying";
+const TODAYSTUDYTIME_KEY = "todayStudyTime";
 
 export const useStorage = () => {
   const [store, setStore] = useState<Storage>();
   const [day, setDay] = useState();
   const [saying, setSaying] = useState();
-  const [] = useState();
+  const [todayStudyTime, setTodayStudyTime] = useState();
 
   useEffect(() => {
     const initStorage = async () => {
@@ -46,13 +47,29 @@ export const useStorage = () => {
         storedSaying = await store.get(SAYING_KEY);
       }
       setSaying(storedSaying);
+
+      let storedTodayStudyTime = await store.get(TODAYSTUDYTIME_KEY);
+      if (!storedTodayStudyTime) {
+        await store.set(TODAYSTUDYTIME_KEY, 0);
+        storedTodayStudyTime = await store.get(TODAYSTUDYTIME_KEY);
+      }
+      console.log(storedTodayStudyTime);
+      setTodayStudyTime(storedTodayStudyTime);
     };
     initStorage();
   }, []);
+
+  const addTodayStudyTime = async (time: any) => {
+    setTodayStudyTime((prevState) => prevState + time);
+    const storedTodayStudyTime = await store?.get(TODAYSTUDYTIME_KEY);
+    await store?.set(TODAYSTUDYTIME_KEY, storedTodayStudyTime + time);
+  };
 
   return {
     store,
     day,
     saying,
+    todayStudyTime,
+    addTodayStudyTime,
   };
 };
