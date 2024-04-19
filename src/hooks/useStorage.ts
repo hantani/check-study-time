@@ -6,12 +6,20 @@ import { getSaying } from "../utils/getSaying";
 const TODAY_KEY = "today";
 const SAYING_KEY = "saying";
 const TODAYSTUDYTIME_KEY = "todayStudyTime";
+const TODAYSTUDYRECORD_KEY = "todayStudyRecord";
+
+interface studyRecord {
+  subject: string;
+  text: string;
+  time: number;
+}
 
 export const useStorage = () => {
   const [store, setStore] = useState<Storage>();
   const [day, setDay] = useState();
   const [saying, setSaying] = useState();
-  const [todayStudyTime, setTodayStudyTime] = useState();
+  const [todayStudyTime, setTodayStudyTime] = useState(0);
+  const [todayStudyRecord, setTodayStudyRecord] = useState<studyRecord[]>([]);
 
   useEffect(() => {
     const initStorage = async () => {
@@ -49,20 +57,46 @@ export const useStorage = () => {
       setSaying(storedSaying);
 
       let storedTodayStudyTime = await store.get(TODAYSTUDYTIME_KEY);
-      if (!storedTodayStudyTime) {
+      if (!storedTodayStudyTime || dayChanged) {
         await store.set(TODAYSTUDYTIME_KEY, 0);
         storedTodayStudyTime = await store.get(TODAYSTUDYTIME_KEY);
       }
-      console.log(storedTodayStudyTime);
       setTodayStudyTime(storedTodayStudyTime);
+
+      let storedTodayStudyRecord = await store.get(TODAYSTUDYRECORD_KEY);
+      if (!storedTodayStudyRecord || dayChanged) {
+        await store.set(TODAYSTUDYRECORD_KEY, JSON.stringify([]));
+        storedTodayStudyRecord = await store.get(TODAYSTUDYRECORD_KEY);
+      }
+      storedTodayStudyRecord = JSON.parse(storedTodayStudyRecord);
+      setTodayStudyRecord(storedTodayStudyRecord);
     };
+
     initStorage();
   }, []);
 
-  const addTodayStudyTime = async (time: any) => {
-    setTodayStudyTime((prevState) => prevState + time);
-    const storedTodayStudyTime = await store?.get(TODAYSTUDYTIME_KEY);
+  const addTodayStudyTime = async (time: number) => {
+    setTodayStudyTime((prevState) => {
+      return prevState + time;
+    });
+    let storedTodayStudyTime = await store?.get(TODAYSTUDYTIME_KEY);
+    storedTodayStudyTime = parseFloat(storedTodayStudyTime);
     await store?.set(TODAYSTUDYTIME_KEY, storedTodayStudyTime + time);
+  };
+
+  const addTodayStudyRecord = async (info: studyRecord) => {
+    if (info.time > 0) {
+      setTodayStudyRecord((prevState) => [...prevState, info]);
+      let storedTodayStudyRecord = await store?.get(TODAYSTUDYRECORD_KEY);
+      if (storedTodayStudyRecord && storedTodayStudyRecord !== undefined) {
+        storedTodayStudyRecord = JSON.parse(storedTodayStudyRecord);
+        storedTodayStudyRecord.push(info);
+        await store?.set(
+          TODAYSTUDYRECORD_KEY,
+          JSON.stringify(storedTodayStudyRecord)
+        );
+      }
+    }
   };
 
   return {
@@ -71,5 +105,7 @@ export const useStorage = () => {
     saying,
     todayStudyTime,
     addTodayStudyTime,
+    todayStudyRecord,
+    addTodayStudyRecord,
   };
 };

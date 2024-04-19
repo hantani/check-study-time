@@ -1,7 +1,3 @@
-import { useStorage } from "../hooks/useStorage";
-
-const { addTodayStudyTime } = useStorage();
-
 export const initialDateObj = {
   day: "",
   month: "",
@@ -38,7 +34,7 @@ const calulateTime = (startDate: any, endDate: any) => {
   if (diffMinute <= 0) {
     return false;
   }
-  return diffMinute.toFixed(1);
+  return parseFloat(diffMinute.toFixed(1));
 };
 
 export const reducer = (state: any, action: any) => {
@@ -52,7 +48,7 @@ export const reducer = (state: any, action: any) => {
         day: action.defaultParts.day,
         month: action.defaultParts.month,
         year: action.defaultParts.year,
-        warning: false,
+        warning: true,
       };
     case "STARTDATE_DEFAULT":
       startDate = {
@@ -73,7 +69,6 @@ export const reducer = (state: any, action: any) => {
           warning: true,
         };
       }
-      addTodayStudyTime(resultTime);
       return {
         day: endDate.day,
         month: endDate.month,
@@ -100,7 +95,6 @@ export const reducer = (state: any, action: any) => {
           warning: true,
         };
       }
-      addTodayStudyTime(resultTime);
       return {
         day: endDate.day,
         month: endDate.month,
@@ -121,7 +115,6 @@ export const reducer = (state: any, action: any) => {
           warning: true,
         };
       }
-      addTodayStudyTime(resultTime);
       return {
         day: endDate.day,
         month: endDate.month,

@@ -12,9 +12,14 @@ import {
   IonButton,
   IonDatetimeButton,
   IonModal,
+  IonCard,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardContent,
+  IonText,
 } from "@ionic/react";
 import "./Note.css";
-import { useState, useRef, useReducer } from "react";
+import { useState, useRef, useReducer, useEffect } from "react";
 import WiseSaying from "../components/WiseSaying";
 import { reducer, initialDateObj } from "../reducer/dateReducer";
 import { useStorage } from "../hooks/useStorage";
@@ -24,8 +29,16 @@ const Note: React.FC = () => {
   const [textarea, setTextarea] = useState();
   const startDateRef = useRef<any>();
   const endDateRef = useRef<any>();
+  const subjectRef = useRef<any>();
+  const textAreaRef = useRef<any>();
   const [state, dispatch] = useReducer(reducer, initialDateObj);
-  const { todayStudyTime } = useStorage();
+  const {
+    todayStudyTime,
+    addTodayStudyTime,
+    todayStudyRecord,
+    addTodayStudyRecord,
+  } = useStorage();
+  const isMounted = useRef(false);
 
   const onSubjectChange = (e: any) => {
     setSubject(e.target.value);
@@ -66,6 +79,21 @@ const Note: React.FC = () => {
       dispatch({ type: "BOTH_VALUE", startDateValue, endDateValue });
     }
   };
+  useEffect(() => {
+    if (isMounted.current) {
+      addTodayStudyTime(state.resultTime);
+      const newStudyRecord = {
+        subject: subjectRef.current.value,
+        text: textAreaRef.current.value,
+        time: state.resultTime,
+      };
+      subjectRef.current.value = "";
+      textAreaRef.current.value = "";
+      addTodayStudyRecord(newStudyRecord);
+    } else {
+      isMounted.current = true;
+    }
+  }, [state]);
 
   return (
     <>
@@ -103,6 +131,7 @@ const Note: React.FC = () => {
               label="공부한 과목"
               placeholder="공부한 과목"
               onIonInput={onSubjectChange}
+              ref={subjectRef}
             ></IonInput>
           </IonItem>
           <IonItem>
@@ -111,6 +140,7 @@ const Note: React.FC = () => {
               placeholder="공부한 내용"
               onIonInput={onTextareaChange}
               className="custom-text-area"
+              ref={textAreaRef}
             ></IonTextarea>
           </IonItem>
         </IonList>
@@ -124,8 +154,30 @@ const Note: React.FC = () => {
             추가하기
           </IonButton>
         </div>
-        <p className="custom-heading">오늘의 공부시간</p>
-        <p>{todayStudyTime}</p>
+        <div>
+          <p className="custom-heading">오늘의 공부기록</p>
+          <ul>
+            {todayStudyRecord.map((record, key) => (
+              <li key={key}>
+                <IonCard>
+                  <IonCardHeader>
+                    <IonCardTitle>
+                      {record.subject && `${record.subject}-`}
+                      <IonText color="secondary">{record.time}hr</IonText>
+                    </IonCardTitle>
+                  </IonCardHeader>
+                  {record.text && (
+                    <IonCardContent>{record.text}</IonCardContent>
+                  )}
+                </IonCard>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <p className="custom-heading">오늘의 공부시간</p>
+          <p>{todayStudyTime}</p>
+        </div>
       </IonContent>
     </>
   );
