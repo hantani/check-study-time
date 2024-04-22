@@ -23,6 +23,8 @@ import { useState, useRef, useReducer, useEffect } from "react";
 import WiseSaying from "../components/WiseSaying";
 import { reducer, initialDateObj } from "../reducer/dateReducer";
 import { useStorage } from "../hooks/useStorage";
+import TodayStudyRecord from "../components/TodayStudyRecord";
+import TodayStudyTime from "../components/TodayStudyTime";
 
 const Note: React.FC = () => {
   const [subject, setSubject] = useState();
@@ -37,6 +39,8 @@ const Note: React.FC = () => {
     addTodayStudyTime,
     todayStudyRecord,
     addTodayStudyRecord,
+    todayGoalTime,
+    addTodayGoalTime,
   } = useStorage();
   const isMounted = useRef(false);
 
@@ -154,30 +158,12 @@ const Note: React.FC = () => {
             추가하기
           </IonButton>
         </div>
-        <div>
-          <p className="custom-heading">오늘의 공부기록</p>
-          <ul>
-            {todayStudyRecord.map((record, key) => (
-              <li key={key}>
-                <IonCard>
-                  <IonCardHeader>
-                    <IonCardTitle>
-                      {record.subject && `${record.subject}-`}
-                      <IonText color="secondary">{record.time}hr</IonText>
-                    </IonCardTitle>
-                  </IonCardHeader>
-                  {record.text && (
-                    <IonCardContent>{record.text}</IonCardContent>
-                  )}
-                </IonCard>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div>
-          <p className="custom-heading">오늘의 공부시간</p>
-          <p>{todayStudyTime}</p>
-        </div>
+        <TodayStudyRecord todayStudyRecord={todayStudyRecord} />
+        <TodayStudyTime
+          todayStudyTime={todayStudyTime}
+          todayGoalTime={todayGoalTime}
+          addTodayGoalTime={addTodayGoalTime}
+        />
       </IonContent>
     </>
   );

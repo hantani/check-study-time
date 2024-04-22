@@ -7,8 +7,9 @@ const TODAY_KEY = "today";
 const SAYING_KEY = "saying";
 const TODAYSTUDYTIME_KEY = "todayStudyTime";
 const TODAYSTUDYRECORD_KEY = "todayStudyRecord";
+const TODAYGOALTIME_KEY = "todayGoalTime";
 
-interface studyRecord {
+export interface studyRecord {
   subject: string;
   text: string;
   time: number;
@@ -19,6 +20,7 @@ export const useStorage = () => {
   const [day, setDay] = useState();
   const [saying, setSaying] = useState();
   const [todayStudyTime, setTodayStudyTime] = useState(0);
+  const [todayGoalTime, setTodayGoalTime] = useState(0);
   const [todayStudyRecord, setTodayStudyRecord] = useState<studyRecord[]>([]);
 
   useEffect(() => {
@@ -70,6 +72,13 @@ export const useStorage = () => {
       }
       storedTodayStudyRecord = JSON.parse(storedTodayStudyRecord);
       setTodayStudyRecord(storedTodayStudyRecord);
+
+      let storedTodayGoalTime = await store.get(TODAYGOALTIME_KEY);
+      if (!storedTodayGoalTime || dayChanged) {
+        await store.set(TODAYGOALTIME_KEY, 0);
+        storedTodayGoalTime = await store.get(TODAYGOALTIME_KEY);
+      }
+      setTodayGoalTime(storedTodayGoalTime);
     };
 
     initStorage();
@@ -99,6 +108,11 @@ export const useStorage = () => {
     }
   };
 
+  const addTodayGoalTime = async (time: number) => {
+    setTodayGoalTime(time);
+    await store?.set(TODAYGOALTIME_KEY, time);
+  };
+
   return {
     store,
     day,
@@ -107,5 +121,7 @@ export const useStorage = () => {
     addTodayStudyTime,
     todayStudyRecord,
     addTodayStudyRecord,
+    todayGoalTime,
+    addTodayGoalTime,
   };
 };

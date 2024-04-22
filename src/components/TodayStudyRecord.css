@@ -1,0 +1,7 @@
+.custom-today-study-record {
+  margin-bottom: 30px;
+}
+.custom-today-study-record > ul > li ion-card-title {
+  font-size: 20px;
+  font-weight: 400;
+}
