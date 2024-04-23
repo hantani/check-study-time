@@ -4,10 +4,52 @@ ul {
 ul > li {
   list-style-type: none;
 }
+
+.custom-saying {
+  margin-bottom: 30px;
+  line-height: 1.5;
+}
+
 .custom-heading {
   font-size: 20px;
   font-weight: 700;
   color: #222;
   margin: 0;
   margin-bottom: 16px;
+}
+
+.custom-text-area {
+  height: 200px;
+}
+
+.custom-warning {
+  color: #e70b33;
+}
+
+.custom-btn-wrapper {
+  margin-top: 16px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+.custom-btn-wrapper.type-02 {
+  margin-bottom: 20px;
+}
+
+.custom-today-study-record {
+  margin-bottom: 30px;
+}
+.custom-today-study-record > ul > li ion-card-title {
+  font-size: 20px;
+  font-weight: 400;
+}
+
+.custom-today-study-time {
+  padding-bottom: 50px;
+}
+
+.custom-progress-desc {
+  margin-top: 10px;
+}
+.custom-progress-desc .custom-interval {
+  margin: 0 5px;
 }

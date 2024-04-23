@@ -18,7 +18,6 @@ import {
   IonCardContent,
   IonText,
 } from "@ionic/react";
-import "./Note.css";
 import { useState, useRef, useReducer, useEffect } from "react";
 import WiseSaying from "../components/WiseSaying";
 import { reducer, initialDateObj } from "../reducer/dateReducer";

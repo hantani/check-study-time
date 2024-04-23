@@ -1,7 +1,12 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useStorage } from "../hooks/useStorage";
-import "./TodayStudyTime.css";
-import { IonInput, IonItem, IonButton, IonProgressBar } from "@ionic/react";
+import {
+  IonInput,
+  IonItem,
+  IonButton,
+  IonProgressBar,
+  IonText,
+} from "@ionic/react";
 
 const TodayStudyTime = ({
   todayStudyTime,
@@ -16,25 +21,22 @@ const TodayStudyTime = ({
   const [progress, setProgress] = useState<number>();
   const goalTimeRef = useRef<any>();
 
-  console.log(progress);
-
   const goalTimeInput = (e: any) => {
     setInput(parseInt(e.target.value));
-  };
-
-  const calculateRate = (goalTime: number) => {
-    const rate = todayStudyTime / goalTime;
-    setProgress(rate);
   };
 
   const onAdd = () => {
     if (input) {
       addTodayGoalTime(input);
-      calculateRate(input);
       setInput(0);
       goalTimeRef.current.value = "";
     }
   };
+
+  useEffect(() => {
+    const rate = todayStudyTime / todayGoalTime;
+    setProgress(rate);
+  }, [todayStudyTime, todayGoalTime]);
 
   return (
     <div className="custom-today-study-time">
@@ -56,23 +58,27 @@ const TodayStudyTime = ({
         ></IonInput>
       </IonItem>
       {todayGoalTime === 0 ? (
-        <div className="custom-btn-wrapper">
+        <div className="custom-btn-wrapper type-02">
           <IonButton color="primary" onClick={onAdd}>
             추가하기
           </IonButton>
         </div>
       ) : (
-        <div className="custom-btn-wrapper">
+        <div className="custom-btn-wrapper type-02">
           <IonButton color="primary" onClick={onAdd}>
             수정하기
           </IonButton>
         </div>
       )}
-      {progress && (
-        <>
+      {todayGoalTime && (
+        <div className="custom-progress-wrapper">
           <IonProgressBar value={progress} />
-          <p>{`${todayStudyTime} / ${todayGoalTime}`}</p>
-        </>
+          <div className="custom-progress-desc">
+            <IonText>{todayStudyTime}</IonText>
+            <IonText className="custom-interval">/</IonText>
+            <IonText color="secondary">{todayGoalTime}</IonText>
+          </div>
+        </div>
       )}
     </div>
   );

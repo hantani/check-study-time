@@ -1,5 +1,4 @@
 import React from "react";
-import "./TodayStudyRecord.css";
 import {
   IonCard,
   IonCardHeader,
