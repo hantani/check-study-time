@@ -8,11 +8,24 @@ const SAYING_KEY = "saying";
 const TODAYSTUDYTIME_KEY = "todayStudyTime";
 const TODAYSTUDYRECORD_KEY = "todayStudyRecord";
 const TODAYGOALTIME_KEY = "todayGoalTime";
+const STUDYTIMES_KEY = "studyTimes";
 
 export interface studyRecord {
   subject: string;
   text: string;
   time: number;
+}
+
+export interface state {
+  day: string;
+  month: string;
+  resultTime: number;
+  warning: boolean;
+  year: string;
+}
+
+export interface newObj {
+  [year: string]: [];
 }
 
 export const useStorage = () => {
@@ -22,6 +35,7 @@ export const useStorage = () => {
   const [todayStudyTime, setTodayStudyTime] = useState(0);
   const [todayGoalTime, setTodayGoalTime] = useState(0);
   const [todayStudyRecord, setTodayStudyRecord] = useState<studyRecord[]>([]);
+  const [studyTimes, setStudyTimes] = useState();
 
   useEffect(() => {
     const initStorage = async () => {
@@ -79,6 +93,14 @@ export const useStorage = () => {
         storedTodayGoalTime = await store.get(TODAYGOALTIME_KEY);
       }
       setTodayGoalTime(storedTodayGoalTime);
+
+      let storedStudyTimes = await store.get(STUDYTIMES_KEY);
+      if (!storedStudyTimes) {
+        await store.set(STUDYTIMES_KEY, JSON.stringify({}));
+        storedStudyTimes = await store.get(STUDYTIMES_KEY);
+      }
+      storedStudyTimes = JSON.parse(storedStudyTimes);
+      setStudyTimes(storedStudyTimes);
     };
 
     initStorage();
@@ -113,6 +135,23 @@ export const useStorage = () => {
     await store?.set(TODAYGOALTIME_KEY, time);
   };
 
+  const addStudyTimes = async (state: state, newStudyRecord: any) => {
+    console.log(state);
+    console.log(newStudyRecord);
+    let storedStudyTimes = await store?.get(STUDYTIMES_KEY);
+    if (storedStudyTimes) {
+      storedStudyTimes = JSON.parse(storedStudyTimes);
+      if (Object.keys(storedStudyTimes).length === 0) {
+        console.log(state.year);
+        const newObj = {
+          state["year"]: {},
+        };
+      } else {
+        console.log("빈 객체가 아닙니다.");
+      }
+    }
+  };
+
   return {
     store,
     day,
@@ -123,5 +162,6 @@ export const useStorage = () => {
     addTodayStudyRecord,
     todayGoalTime,
     addTodayGoalTime,
+    addStudyTimes,
   };
 };

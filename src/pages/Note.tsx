@@ -12,10 +12,6 @@ import {
   IonButton,
   IonDatetimeButton,
   IonModal,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardContent,
   IonText,
 } from "@ionic/react";
 import { useState, useRef, useReducer, useEffect } from "react";
@@ -40,6 +36,7 @@ const Note: React.FC = () => {
     addTodayStudyRecord,
     todayGoalTime,
     addTodayGoalTime,
+    addStudyTimes,
   } = useStorage();
   const isMounted = useRef(false);
 
@@ -93,6 +90,7 @@ const Note: React.FC = () => {
       subjectRef.current.value = "";
       textAreaRef.current.value = "";
       addTodayStudyRecord(newStudyRecord);
+      addStudyTimes(state, newStudyRecord);
     } else {
       isMounted.current = true;
     }
@@ -148,9 +146,11 @@ const Note: React.FC = () => {
           </IonItem>
         </IonList>
         {state.warning === true && (
-          <p className="custom-warning">
-            시간 입력이 잘못되었습니다 다시 입력해주세요
-          </p>
+          <div className="custom-danger-wrapper">
+            <IonText color="danger">
+              시간 입력이 잘못되었습니다 다시 입력해주세요
+            </IonText>
+          </div>
         )}
         <div className="custom-btn-wrapper">
           <IonButton color="primary" onClick={onAdd}>

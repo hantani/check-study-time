@@ -6,14 +6,13 @@ ul > li {
 }
 
 .custom-saying {
-  margin-bottom: 30px;
+  margin-bottom: 40px;
   line-height: 1.5;
 }
 
 .custom-heading {
   font-size: 20px;
   font-weight: 700;
-  color: #222;
   margin: 0;
   margin-bottom: 16px;
 }
@@ -22,13 +21,13 @@ ul > li {
   height: 200px;
 }
 
-.custom-warning {
-  color: #e70b33;
+.custom-danger-wrapper {
+  margin-top: 8px;
 }
 
 .custom-btn-wrapper {
   margin-top: 16px;
-  margin-bottom: 30px;
+  margin-bottom: 40px;
   text-align: center;
 }
 .custom-btn-wrapper.type-02 {
@@ -36,7 +35,7 @@ ul > li {
 }
 
 .custom-today-study-record {
-  margin-bottom: 30px;
+  margin-bottom: 40px;
 }
 .custom-today-study-record > ul > li ion-card-title {
   font-size: 20px;
@@ -48,8 +47,17 @@ ul > li {
 }
 
 .custom-progress-desc {
-  margin-top: 10px;
+  margin-top: 6px;
 }
 .custom-progress-desc .custom-interval {
   margin: 0 5px;
+}
+
+.custom-celebrate-wrapper {
+  margin-bottom: 14px;
+}
+.custom-date-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 40px;
 }
