@@ -142,9 +142,8 @@ export const useStorage = () => {
     if (storedStudyTimes) {
       storedStudyTimes = JSON.parse(storedStudyTimes);
       if (Object.keys(storedStudyTimes).length === 0) {
-        console.log(state.year);
         const newObj = {
-          state["year"]: {},
+          [state.year]: {},
         };
       } else {
         console.log("빈 객체가 아닙니다.");
