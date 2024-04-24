@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Storage } from "@ionic/storage";
 import { getDate } from "../utils/getDate";
 import { getSaying } from "../utils/getSaying";
+import { star } from "ionicons/icons";
 
 const TODAY_KEY = "today";
 const SAYING_KEY = "saying";
@@ -89,7 +90,7 @@ export const useStorage = () => {
 
       let storedTodayGoalTime = await store.get(TODAYGOALTIME_KEY);
       if (!storedTodayGoalTime || dayChanged) {
-        await store.set(TODAYGOALTIME_KEY, 0);
+        await store.set(TODAYGOALTIME_KEY, null);
         storedTodayGoalTime = await store.get(TODAYGOALTIME_KEY);
       }
       setTodayGoalTime(storedTodayGoalTime);
@@ -116,17 +117,15 @@ export const useStorage = () => {
   };
 
   const addTodayStudyRecord = async (info: studyRecord) => {
-    if (info.time > 0) {
-      setTodayStudyRecord((prevState) => [...prevState, info]);
-      let storedTodayStudyRecord = await store?.get(TODAYSTUDYRECORD_KEY);
-      if (storedTodayStudyRecord && storedTodayStudyRecord !== undefined) {
-        storedTodayStudyRecord = JSON.parse(storedTodayStudyRecord);
-        storedTodayStudyRecord.push(info);
-        await store?.set(
-          TODAYSTUDYRECORD_KEY,
-          JSON.stringify(storedTodayStudyRecord)
-        );
-      }
+    setTodayStudyRecord((prevState) => [...prevState, info]);
+    let storedTodayStudyRecord = await store?.get(TODAYSTUDYRECORD_KEY);
+    if (storedTodayStudyRecord && storedTodayStudyRecord !== undefined) {
+      storedTodayStudyRecord = JSON.parse(storedTodayStudyRecord);
+      storedTodayStudyRecord.push(info);
+      await store?.set(
+        TODAYSTUDYRECORD_KEY,
+        JSON.stringify(storedTodayStudyRecord)
+      );
     }
   };
 
@@ -136,19 +135,78 @@ export const useStorage = () => {
   };
 
   const addStudyTimes = async (state: state, newStudyRecord: any) => {
-    console.log(state);
-    console.log(newStudyRecord);
     let storedStudyTimes = await store?.get(STUDYTIMES_KEY);
-    if (storedStudyTimes) {
-      storedStudyTimes = JSON.parse(storedStudyTimes);
-      if (Object.keys(storedStudyTimes).length === 0) {
-        const newObj = {
-          [state.year]: {},
-        };
-      } else {
-        console.log("빈 객체가 아닙니다.");
-      }
+    storedStudyTimes = JSON.parse(storedStudyTimes);
+
+    let newObj;
+    const yearObj = storedStudyTimes[state.year];
+    if (!yearObj) {
+      newObj = {
+        ...storedStudyTimes,
+        [state.year]: {
+          [state.month]: {
+            [state.day]: [newStudyRecord],
+          },
+        },
+      };
+      storedStudyTimes = newObj;
+      setStudyTimes(storedStudyTimes);
+      await store?.set(STUDYTIMES_KEY, JSON.stringify(storedStudyTimes));
+      return;
     }
+
+    const monthObj = storedStudyTimes[state.year][state.month];
+    if (!monthObj) {
+      newObj = {
+        ...storedStudyTimes,
+        [state.year]: {
+          ...storedStudyTimes[state.year],
+          [state.month]: {
+            [state.day]: [newStudyRecord],
+          },
+        },
+      };
+      storedStudyTimes = newObj;
+      console.log(storedStudyTimes);
+      setStudyTimes(storedStudyTimes);
+      await store?.set(STUDYTIMES_KEY, JSON.stringify(storedStudyTimes));
+      return;
+    }
+
+    const dayObj = storedStudyTimes[state.year][state.month][state.day];
+    if (!dayObj) {
+      newObj = {
+        ...storedStudyTimes,
+        [state.year]: {
+          ...storedStudyTimes[state.year],
+          [state.month]: {
+            ...storedStudyTimes[state.year][state.month],
+            [state.day]: [newStudyRecord],
+          },
+        },
+      };
+      storedStudyTimes = newObj;
+      setStudyTimes(storedStudyTimes);
+      await store?.set(STUDYTIMES_KEY, JSON.stringify(storedStudyTimes));
+      return;
+    }
+
+    newObj = {
+      ...storedStudyTimes,
+      [state.year]: {
+        ...storedStudyTimes[state.year],
+        [state.month]: {
+          ...storedStudyTimes[state.year][state.month],
+          [state.day]: [
+            ...storedStudyTimes[state.year][state.month][state.day],
+            newStudyRecord,
+          ],
+        },
+      },
+    };
+    storedStudyTimes = newObj;
+    setStudyTimes(storedStudyTimes);
+    await store?.set(STUDYTIMES_KEY, JSON.stringify(storedStudyTimes));
   };
 
   return {
@@ -161,6 +219,7 @@ export const useStorage = () => {
     addTodayStudyRecord,
     todayGoalTime,
     addTodayGoalTime,
+    studyTimes,
     addStudyTimes,
   };
 };

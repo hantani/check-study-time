@@ -7,15 +7,12 @@ import {
   IonCardContent,
 } from "@ionic/react";
 import { studyRecord } from "../hooks/useStorage";
-import { useStorage } from "../hooks/useStorage";
 
 const TodayStudyRecord = ({
   todayStudyRecord,
 }: {
   todayStudyRecord: studyRecord[];
 }): JSX.Element => {
-  // const { todayStudyRecord } = useStorage();
-
   return (
     <div className="custom-today-study-record">
       <p className="custom-heading">오늘의 공부기록</p>

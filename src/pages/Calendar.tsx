@@ -5,23 +5,34 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { useEffect, useRef } from "react";
-import TodayStudyRecord from "../components/TodayStudyRecord";
+import { useEffect, useRef, useState } from "react";
+import { useStorage } from "../hooks/useStorage";
+import StudyRecord from "../components/StudyRecord";
+import { getDay, getMonth, getYear } from "../utils/getDate";
 
-const testArr = [
-  {
-    subject: "test",
-    text: "test",
-    time: 3,
-  },
-];
+export interface date {
+  year: string;
+  month: string;
+  day: string;
+}
 
 const Calendar: React.FC = () => {
   const dateRef = useRef<any>();
-  const onChange = () => {};
+  const isMounted = useRef(false);
+  const [date, setDate] = useState<date>();
+  const { studyTimes } = useStorage();
+  const onChange = () => {
+    console.log("working");
+  };
   useEffect(() => {
-    console.dir(dateRef.current);
-    console.log(dateRef.current.value);
+    if (dateRef.current.value === undefined) {
+      const newObj = {
+        year: getYear(),
+        month: getMonth(),
+        day: getDay(),
+      };
+      setDate(newObj);
+    }
   }, []);
 
   return (
@@ -39,7 +50,7 @@ const Calendar: React.FC = () => {
             onIonChange={onChange}
           ></IonDatetime>
         </div>
-        <TodayStudyRecord todayStudyRecord={testArr} />
+        <StudyRecord date={date} studyTimes={studyTimes} />
       </IonContent>
     </>
   );

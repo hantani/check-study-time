@@ -6,7 +6,7 @@ export const initialDateObj = {
   warning: false,
 };
 
-const stringToObj = (dateString: string) => {
+export const stringToObj = (dateString: string) => {
   const year = dateString.substring(0, 4);
   const month = dateString.substring(5, 7);
   const day = dateString.substring(8, 10);

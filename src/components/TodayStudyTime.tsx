@@ -70,7 +70,7 @@ const TodayStudyTime = ({
           </IonButton>
         </div>
       )}
-      {todayStudyTime >= todayGoalTime && (
+      {todayGoalTime && todayStudyTime >= todayGoalTime && (
         <div className="custom-celebrate-wrapper">
           <IonText color="secondary" className="custom-celebrate">
             축하드립니다! 오늘 목표 공부시간을 달성하였습니다!

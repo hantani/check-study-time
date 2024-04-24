@@ -30,6 +30,7 @@ const Note: React.FC = () => {
   const textAreaRef = useRef<any>();
   const [state, dispatch] = useReducer(reducer, initialDateObj);
   const {
+    day,
     todayStudyTime,
     addTodayStudyTime,
     todayStudyRecord,
@@ -80,8 +81,7 @@ const Note: React.FC = () => {
     }
   };
   useEffect(() => {
-    if (isMounted.current) {
-      addTodayStudyTime(state.resultTime);
+    if (isMounted.current && state.resultTime > 0) {
       const newStudyRecord = {
         subject: subjectRef.current.value,
         text: textAreaRef.current.value,
@@ -89,6 +89,7 @@ const Note: React.FC = () => {
       };
       subjectRef.current.value = "";
       textAreaRef.current.value = "";
+      addTodayStudyTime(state.resultTime);
       addTodayStudyRecord(newStudyRecord);
       addStudyTimes(state, newStudyRecord);
     } else {
