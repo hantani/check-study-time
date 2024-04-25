@@ -9,6 +9,7 @@ import { useEffect, useRef, useState } from "react";
 import { useStorage } from "../hooks/useStorage";
 import StudyRecord from "../components/StudyRecord";
 import { getDay, getMonth, getYear } from "../utils/getDate";
+import { stringToObj } from "../reducer/dateReducer";
 
 export interface date {
   year: string;
@@ -19,10 +20,20 @@ export interface date {
 const Calendar: React.FC = () => {
   const dateRef = useRef<any>();
   const isMounted = useRef(false);
-  const [date, setDate] = useState<date>();
   const { studyTimes } = useStorage();
+  const [date, setDate] = useState<date>({
+    year: "",
+    month: "",
+    day: "",
+  });
   const onChange = () => {
-    console.log("working");
+    const retrunedObj = stringToObj(dateRef.current.value);
+    const newObj = {
+      year: retrunedObj.year,
+      month: retrunedObj.month,
+      day: retrunedObj.day,
+    };
+    setDate(newObj);
   };
   useEffect(() => {
     if (dateRef.current.value === undefined) {

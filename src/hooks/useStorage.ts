@@ -25,8 +25,16 @@ export interface state {
   year: string;
 }
 
-export interface newObj {
-  [year: string]: [];
+interface dayObj {
+  [day: string]: studyRecord[];
+}
+
+interface yearObj {
+  [month: string]: dayObj;
+}
+
+export interface studyTimes {
+  [year: string]: yearObj;
 }
 
 export const useStorage = () => {
@@ -36,7 +44,7 @@ export const useStorage = () => {
   const [todayStudyTime, setTodayStudyTime] = useState(0);
   const [todayGoalTime, setTodayGoalTime] = useState(0);
   const [todayStudyRecord, setTodayStudyRecord] = useState<studyRecord[]>([]);
-  const [studyTimes, setStudyTimes] = useState();
+  const [studyTimes, setStudyTimes] = useState<studyTimes>({});
 
   useEffect(() => {
     const initStorage = async () => {
