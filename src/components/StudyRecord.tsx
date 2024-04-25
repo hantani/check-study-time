@@ -5,9 +5,11 @@ import {
   IonCardTitle,
   IonText,
   IonCardContent,
+  IonIcon,
 } from "@ionic/react";
 import { studyRecord, studyTimes } from "../hooks/useStorage";
 import { date } from "../pages/Calendar";
+import { readerOutline } from "ionicons/icons";
 
 const StudyRecord = ({
   date,
@@ -53,7 +55,8 @@ const StudyRecord = ({
           ))
         ) : (
           <div className="custom-no-record">
-            <p>기록이 없습니다</p>
+            <IonIcon icon={readerOutline}></IonIcon>
+            <p className="custom-text">기록이 없습니다</p>
           </div>
         )}
       </ul>

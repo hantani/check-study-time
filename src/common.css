@@ -61,3 +61,12 @@ ul > li {
   justify-content: center;
   margin-bottom: 40px;
 }
+
+.custom-no-record {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.custom-no-record ion-icon {
+  font-size: 30px;
+}

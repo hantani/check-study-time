@@ -19,7 +19,6 @@ export interface date {
 
 const Calendar: React.FC = () => {
   const dateRef = useRef<any>();
-  const isMounted = useRef(false);
   const { studyTimes } = useStorage();
   const [date, setDate] = useState<date>({
     year: "",
