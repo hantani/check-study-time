@@ -57,7 +57,7 @@ const TodayStudyTime = ({
           value={todayStudyTime}
         ></IonInput>
       </IonItem>
-      {todayGoalTime === 0 ? (
+      {todayGoalTime === null ? (
         <div className="custom-btn-wrapper type-02">
           <IonButton color="primary" onClick={onAdd}>
             추가하기
