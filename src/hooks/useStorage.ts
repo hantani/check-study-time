@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Storage } from "@ionic/storage";
 import { getDate } from "../utils/getDate";
 import { getSaying } from "../utils/getSaying";
-import { star } from "ionicons/icons";
+import { getYear } from "../utils/getDate";
 
 const TODAY_KEY = "today";
 const SAYING_KEY = "saying";
@@ -10,6 +10,7 @@ const TODAYSTUDYTIME_KEY = "todayStudyTime";
 const TODAYSTUDYRECORD_KEY = "todayStudyRecord";
 const TODAYGOALTIME_KEY = "todayGoalTime";
 const STUDYTIMES_KEY = "studyTimes";
+const MONTHLYDATA_KEY = "monthlyData";
 
 export interface studyRecord {
   subject: string;
@@ -37,6 +38,45 @@ export interface studyTimes {
   [year: string]: yearObj;
 }
 
+interface monthlyData {
+  x: number;
+  y: number;
+}
+
+const initialMonthlyData = [
+  { x: 1, y: 0 },
+  { x: 2, y: 0 },
+  { x: 3, y: 0 },
+  { x: 4, y: 0 },
+  { x: 5, y: 0 },
+  { x: 6, y: 0 },
+  { x: 7, y: 0 },
+  { x: 8, y: 0 },
+  { x: 9, y: 0 },
+  { x: 10, y: 0 },
+  { x: 11, y: 0 },
+  { x: 12, y: 0 },
+];
+
+const calculateData = (studyTimes: studyTimes) => {
+  const currentYear = getYear();
+  const newData = initialMonthlyData;
+
+  for (const month in studyTimes[currentYear]) {
+    const index = parseInt(month) - 1;
+    let sum = 0;
+    for (const day in studyTimes[currentYear][month]) {
+      const dayArr = studyTimes[currentYear][month][day];
+      dayArr.map((record) => {
+        sum += record.time;
+      });
+    }
+    newData[index].y = sum;
+  }
+
+  return newData;
+};
+
 export const useStorage = () => {
   const [store, setStore] = useState<Storage>();
   const [day, setDay] = useState();
@@ -45,6 +85,8 @@ export const useStorage = () => {
   const [todayGoalTime, setTodayGoalTime] = useState(0);
   const [todayStudyRecord, setTodayStudyRecord] = useState<studyRecord[]>([]);
   const [studyTimes, setStudyTimes] = useState<studyTimes>({});
+  const [monthlyData, setMonthlyData] =
+    useState<monthlyData[]>(initialMonthlyData);
 
   useEffect(() => {
     const initStorage = async () => {
@@ -110,6 +152,14 @@ export const useStorage = () => {
       }
       storedStudyTimes = JSON.parse(storedStudyTimes);
       setStudyTimes(storedStudyTimes);
+
+      let storedMonthlyData = await store.get(MONTHLYDATA_KEY);
+      if (!storedMonthlyData) {
+        await store.set(MONTHLYDATA_KEY, JSON.stringify(initialMonthlyData));
+        storedMonthlyData = await store.get(MONTHLYDATA_KEY);
+      }
+      storedMonthlyData = JSON.parse(storedMonthlyData);
+      setMonthlyData(storedMonthlyData);
     };
 
     initStorage();
@@ -214,6 +264,10 @@ export const useStorage = () => {
     };
     storedStudyTimes = newObj;
     setStudyTimes(storedStudyTimes);
+    const newMonthlyData = calculateData(storedStudyTimes);
+    console.log(newMonthlyData);
+    setMonthlyData(newMonthlyData);
+    await store?.set(MONTHLYDATA_KEY, JSON.stringify(newMonthlyData));
     await store?.set(STUDYTIMES_KEY, JSON.stringify(storedStudyTimes));
   };
 
@@ -229,5 +283,6 @@ export const useStorage = () => {
     addTodayGoalTime,
     studyTimes,
     addStudyTimes,
+    monthlyData,
   };
 };
