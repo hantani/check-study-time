@@ -70,3 +70,8 @@ ul > li {
 .custom-no-record ion-icon {
   font-size: 30px;
 }
+
+.custom-average .custom-title {
+  font-weight: 700;
+  margin-right: 5px;
+}

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Storage } from "@ionic/storage";
-import { getDate } from "../utils/getDate";
+import { getDate, getMonth } from "../utils/getDate";
 import { getSaying } from "../utils/getSaying";
 import { getYear } from "../utils/getDate";
 
@@ -11,6 +11,9 @@ const TODAYSTUDYRECORD_KEY = "todayStudyRecord";
 const TODAYGOALTIME_KEY = "todayGoalTime";
 const STUDYTIMES_KEY = "studyTimes";
 const MONTHLYDATA_KEY = "monthlyData";
+const MONTHLYAVERAGE_KEY = "monthlyAverage";
+const DAILYAVERAGE_KEY = "dailyAverage";
+const COMPARISONTIME_KEY = "comparisonTime";
 
 export interface studyRecord {
   subject: string;
@@ -58,7 +61,32 @@ const initialMonthlyData = [
   { x: 12, y: 0 },
 ];
 
-const calculateData = (studyTimes: studyTimes) => {
+const calculateDailyAverage = (studyTimes: studyTimes) => {
+  const currentYear = getYear();
+  const currentMonth = getMonth();
+  const dailyTimes: number[] = [];
+  let average = 0;
+  let dailySum = 0;
+
+  for (const day in studyTimes[currentYear][currentMonth]) {
+    let sum = 0;
+    const dayArr = studyTimes[currentYear][currentMonth][day];
+    dayArr.map((record) => {
+      sum += record.time;
+    });
+    dailyTimes.push(sum);
+  }
+
+  dailyTimes.map((elem) => {
+    dailySum += elem;
+  });
+  average = dailySum / dailyTimes.length;
+  average = parseFloat(average.toFixed(1));
+
+  return average;
+};
+
+const calculateMonthlyData = (studyTimes: studyTimes) => {
   const currentYear = getYear();
   const newData = initialMonthlyData;
 
@@ -77,6 +105,38 @@ const calculateData = (studyTimes: studyTimes) => {
   return newData;
 };
 
+const calculateMonthlyAverage = (newData: monthlyData[]) => {
+  const montlyTimes: number[] = [];
+  let sum = 0;
+  let average = 0;
+
+  newData.map((elem) => {
+    if (elem.y > 0) {
+      montlyTimes.push(elem.y);
+    }
+  });
+
+  montlyTimes.map((elem) => {
+    sum += elem;
+  });
+  average = sum / montlyTimes.length;
+  average = parseFloat(average.toFixed(1));
+
+  return average;
+};
+
+const calculateComparison = (newData: monthlyData[]) => {
+  const currentMonth = getMonth();
+  const index = parseInt(currentMonth) - 1;
+
+  if (currentMonth === "01") {
+    return;
+  }
+  const comparisonTime = newData[index].y - newData[index - 1].y;
+
+  return comparisonTime;
+};
+
 export const useStorage = () => {
   const [store, setStore] = useState<Storage>();
   const [day, setDay] = useState();
@@ -87,6 +147,9 @@ export const useStorage = () => {
   const [studyTimes, setStudyTimes] = useState<studyTimes>({});
   const [monthlyData, setMonthlyData] =
     useState<monthlyData[]>(initialMonthlyData);
+  const [monthlyAverage, setMonthlyAverage] = useState(0);
+  const [dailyAverage, setDailyAverage] = useState(0);
+  const [comparisonTime, setComparisonTime] = useState(0);
 
   useEffect(() => {
     const initStorage = async () => {
@@ -160,6 +223,27 @@ export const useStorage = () => {
       }
       storedMonthlyData = JSON.parse(storedMonthlyData);
       setMonthlyData(storedMonthlyData);
+
+      let storedMonthlyAverage = await store.get(MONTHLYAVERAGE_KEY);
+      if (!storedMonthlyAverage) {
+        await store.set(MONTHLYAVERAGE_KEY, 0);
+        storedMonthlyAverage = await store.get(MONTHLYAVERAGE_KEY);
+      }
+      setMonthlyAverage(storedMonthlyAverage);
+
+      let storedDailyAverage = await store.get(DAILYAVERAGE_KEY);
+      if (!storedDailyAverage) {
+        await store.set(DAILYAVERAGE_KEY, 0);
+        storedDailyAverage = await store.get(DAILYAVERAGE_KEY);
+      }
+      setDailyAverage(storedDailyAverage);
+
+      let storedComparisonTime = await store.get(COMPARISONTIME_KEY);
+      if (!storedComparisonTime) {
+        await store.set(COMPARISONTIME_KEY, 0);
+        storedComparisonTime = await store.get(COMPARISONTIME_KEY);
+      }
+      setComparisonTime(storedComparisonTime);
     };
 
     initStorage();
@@ -197,6 +281,10 @@ export const useStorage = () => {
     storedStudyTimes = JSON.parse(storedStudyTimes);
 
     let newObj;
+    let newMonthlyData;
+    let newMonthlyAverage;
+    let newDailyAverage;
+    let newComparisonTime;
     const yearObj = storedStudyTimes[state.year];
     if (!yearObj) {
       newObj = {
@@ -210,6 +298,20 @@ export const useStorage = () => {
       storedStudyTimes = newObj;
       setStudyTimes(storedStudyTimes);
       await store?.set(STUDYTIMES_KEY, JSON.stringify(storedStudyTimes));
+      newMonthlyData = calculateMonthlyData(newObj);
+      setMonthlyData(newMonthlyData);
+      await store?.set(MONTHLYDATA_KEY, JSON.stringify(newMonthlyData));
+      newMonthlyAverage = calculateMonthlyAverage(newMonthlyData);
+      setMonthlyAverage(newMonthlyAverage);
+      await store?.set(MONTHLYAVERAGE_KEY, newMonthlyAverage);
+      newDailyAverage = calculateDailyAverage(newObj);
+      setDailyAverage(newDailyAverage);
+      await store?.set(DAILYAVERAGE_KEY, newDailyAverage);
+      newComparisonTime = calculateComparison(newMonthlyData);
+      if (newComparisonTime) {
+        setComparisonTime(newComparisonTime);
+        await store?.set(COMPARISONTIME_KEY, newComparisonTime);
+      }
       return;
     }
 
@@ -225,9 +327,23 @@ export const useStorage = () => {
         },
       };
       storedStudyTimes = newObj;
-      console.log(storedStudyTimes);
       setStudyTimes(storedStudyTimes);
       await store?.set(STUDYTIMES_KEY, JSON.stringify(storedStudyTimes));
+      newMonthlyData = calculateMonthlyData(newObj);
+      setMonthlyData(newMonthlyData);
+      await store?.set(MONTHLYDATA_KEY, JSON.stringify(newMonthlyData));
+      newMonthlyAverage = calculateMonthlyAverage(newMonthlyData);
+      setMonthlyAverage(newMonthlyAverage);
+      await store?.set(MONTHLYAVERAGE_KEY, newMonthlyAverage);
+      calculateDailyAverage(newObj);
+      newDailyAverage = calculateDailyAverage(newObj);
+      setDailyAverage(newDailyAverage);
+      await store?.set(DAILYAVERAGE_KEY, newDailyAverage);
+      newComparisonTime = calculateComparison(newMonthlyData);
+      if (newComparisonTime) {
+        setComparisonTime(newComparisonTime);
+        await store?.set(COMPARISONTIME_KEY, newComparisonTime);
+      }
       return;
     }
 
@@ -246,6 +362,21 @@ export const useStorage = () => {
       storedStudyTimes = newObj;
       setStudyTimes(storedStudyTimes);
       await store?.set(STUDYTIMES_KEY, JSON.stringify(storedStudyTimes));
+      newMonthlyData = calculateMonthlyData(newObj);
+      setMonthlyData(newMonthlyData);
+      await store?.set(MONTHLYDATA_KEY, JSON.stringify(newMonthlyData));
+      newMonthlyAverage = calculateMonthlyAverage(newMonthlyData);
+      setMonthlyAverage(newMonthlyAverage);
+      await store?.set(MONTHLYAVERAGE_KEY, newMonthlyAverage);
+      calculateDailyAverage(newObj);
+      newDailyAverage = calculateDailyAverage(newObj);
+      setDailyAverage(newDailyAverage);
+      await store?.set(DAILYAVERAGE_KEY, newDailyAverage);
+      newComparisonTime = calculateComparison(newMonthlyData);
+      if (newComparisonTime) {
+        setComparisonTime(newComparisonTime);
+        await store?.set(COMPARISONTIME_KEY, newComparisonTime);
+      }
       return;
     }
 
@@ -264,11 +395,22 @@ export const useStorage = () => {
     };
     storedStudyTimes = newObj;
     setStudyTimes(storedStudyTimes);
-    const newMonthlyData = calculateData(storedStudyTimes);
-    console.log(newMonthlyData);
+    await store?.set(STUDYTIMES_KEY, JSON.stringify(storedStudyTimes));
+    newMonthlyData = calculateMonthlyData(newObj);
     setMonthlyData(newMonthlyData);
     await store?.set(MONTHLYDATA_KEY, JSON.stringify(newMonthlyData));
-    await store?.set(STUDYTIMES_KEY, JSON.stringify(storedStudyTimes));
+    newMonthlyAverage = calculateMonthlyAverage(newMonthlyData);
+    setMonthlyAverage(newMonthlyAverage);
+    await store?.set(MONTHLYAVERAGE_KEY, newMonthlyAverage);
+    calculateDailyAverage(newObj);
+    newDailyAverage = calculateDailyAverage(newObj);
+    setDailyAverage(newDailyAverage);
+    await store?.set(DAILYAVERAGE_KEY, newDailyAverage);
+    newComparisonTime = calculateComparison(newMonthlyData);
+    if (newComparisonTime) {
+      setComparisonTime(newComparisonTime);
+      await store?.set(COMPARISONTIME_KEY, newComparisonTime);
+    }
   };
 
   return {
@@ -284,5 +426,8 @@ export const useStorage = () => {
     studyTimes,
     addStudyTimes,
     monthlyData,
+    monthlyAverage,
+    dailyAverage,
+    comparisonTime,
   };
 };
