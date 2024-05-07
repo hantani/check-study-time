@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { Storage } from "@ionic/storage";
+import { Drivers, Storage } from "@ionic/storage";
 import { getDate, getMonth } from "../utils/getDate";
 import { getSaying } from "../utils/getSaying";
 import { getYear } from "../utils/getDate";
+import * as CordovaSQLiteDriver from "localforage-cordovasqlitedriver";
 
 const TODAY_KEY = "today";
 const SAYING_KEY = "saying";
@@ -155,7 +156,14 @@ export const useStorage = () => {
     const initStorage = async () => {
       const newStore = new Storage({
         name: "check-study-time-db",
+        // driverOrder: [
+        //   CordovaSQLiteDriver._driver,
+        //   Drivers.IndexedDB,
+        //   Drivers.LocalStorage,
+        // ],
       });
+      // await newStore.defineDriver(CordovaSQLiteDriver);
+
       const store = await newStore.create();
       setStore(store);
 
