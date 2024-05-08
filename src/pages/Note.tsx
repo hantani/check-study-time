@@ -20,6 +20,7 @@ import { reducer, initialDateObj } from "../reducer/dateReducer";
 import { useStorage } from "../hooks/useStorage";
 import TodayStudyRecord from "../components/TodayStudyRecord";
 import TodayStudyTime from "../components/TodayStudyTime";
+import Form from "../components/Form";
 
 const Note: React.FC = () => {
   const [subject, setSubject] = useState();
@@ -106,6 +107,7 @@ const Note: React.FC = () => {
       </IonHeader>
       <IonContent className="ion-padding">
         <WiseSaying></WiseSaying>
+        <Form />
         <p className="custom-heading">공부시간 기록</p>
         <IonList>
           <IonItem>
