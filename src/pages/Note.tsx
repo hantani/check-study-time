@@ -4,11 +4,12 @@ import { useStorage } from "../hooks/useStorage";
 import TodayStudyRecord from "../components/TodayStudyRecord";
 import TodayStudyTime from "../components/TodayStudyTime";
 import Form from "../components/Form";
-import React, { useRef, useReducer, useEffect } from "react";
+import React, { useRef, useReducer, useEffect, useCallback } from "react";
 import { reducer, initialDateObj } from "../reducer/dateReducer";
 
 const Note: React.FC = () => {
   const {
+    saying,
     todayStudyTime,
     todayStudyRecord,
     todayGoalTime,
@@ -24,7 +25,7 @@ const Note: React.FC = () => {
   const textAreaRef = useRef<any>();
   const [state, dispatch] = useReducer(reducer, initialDateObj);
 
-  const onAdd = () => {
+  const onAdd = useCallback(() => {
     if (
       startDateRef.current.value === undefined &&
       endDateRef.current.value === undefined
@@ -56,7 +57,7 @@ const Note: React.FC = () => {
       const endDateValue = endDateRef.current.value;
       dispatch({ type: "BOTH_VALUE", startDateValue, endDateValue });
     }
-  };
+  }, []);
 
   useEffect(() => {
     if (isMounted.current && state.resultTime > 0) {
@@ -70,11 +71,14 @@ const Note: React.FC = () => {
       addTodayStudyTime(state.resultTime);
       addTodayStudyRecord(newStudyRecord);
       addStudyTimes(state, newStudyRecord);
-      console.log(todayStudyTime, todayStudyRecord);
     } else {
       isMounted.current = true;
     }
   }, [state]);
+
+  useEffect(() => {
+    console.log(typeof startDateRef);
+  }, []);
 
   return (
     <>
@@ -84,7 +88,7 @@ const Note: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent className="ion-padding">
-        <WiseSaying></WiseSaying>
+        <WiseSaying saying={saying}></WiseSaying>
         <Form
           startDateRef={startDateRef}
           endDateRef={endDateRef}
@@ -93,7 +97,6 @@ const Note: React.FC = () => {
           warning={state.warning}
           onAdd={onAdd}
         />
-        <p className="custom-heading">공부시간 기록</p>
         <TodayStudyRecord todayStudyRecord={todayStudyRecord} />
         <TodayStudyTime
           todayStudyTime={todayStudyTime}

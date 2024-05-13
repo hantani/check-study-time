@@ -1,4 +1,10 @@
-import { IonContent, IonHeader, IonTitle, IonToolbar } from "@ionic/react";
+import {
+  IonContent,
+  IonHeader,
+  IonTitle,
+  IonToolbar,
+  IonText,
+} from "@ionic/react";
 import { useEffect, useState, useRef } from "react";
 import { VictoryLine, VictoryChart, VictoryAxis, VictoryTheme } from "victory";
 import { useStorage } from "../hooks/useStorage";
@@ -6,16 +12,32 @@ import { getMonth, getYear } from "../utils/getDate";
 
 const style = {
   data: {
-    stroke: "#3dc2ff",
+    stroke: "#0054e9",
   },
 };
 
 const comparisonComponent = (time: number) => {
   if (time > 0) {
-    return <p>저번달 보다 {time}시간 공부 더 하셨어요</p>;
+    return (
+      <p>
+        저번달 보다{" "}
+        <IonText color="secondary" className="custom-time">
+          {time}
+        </IonText>
+        시간 공부 더 하셨어요
+      </p>
+    );
   } else if (time < 0) {
     const convertedTime = Math.abs(time);
-    return <p>저번달 보다 {convertedTime}시간 공부 덜 하셨어요</p>;
+    return (
+      <p>
+        저번달 보다{" "}
+        <IonText color="danger" className="custom-time">
+          {convertedTime}
+        </IonText>
+        시간 공부 덜 하셨어요
+      </p>
+    );
   }
 };
 

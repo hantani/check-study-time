@@ -6,7 +6,6 @@ ul > li {
 }
 
 .custom-saying {
-  margin-bottom: 40px;
   line-height: 1.5;
 }
 
@@ -74,4 +73,8 @@ ul > li {
 .custom-average .custom-title {
   font-weight: 700;
   margin-right: 5px;
+}
+
+.custom-time {
+  font-weight: 700;
 }

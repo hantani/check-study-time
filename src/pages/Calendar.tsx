@@ -5,7 +5,7 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useStorage } from "../hooks/useStorage";
 import StudyRecord from "../components/StudyRecord";
 import { getDay, getMonth, getYear } from "../utils/getDate";
@@ -25,7 +25,7 @@ const Calendar: React.FC = () => {
     month: "",
     day: "",
   });
-  const onChange = () => {
+  const onChange = useCallback(() => {
     const retrunedObj = stringToObj(dateRef.current.value);
     const newObj = {
       year: retrunedObj.year,
@@ -33,7 +33,7 @@ const Calendar: React.FC = () => {
       day: retrunedObj.day,
     };
     setDate(newObj);
-  };
+  }, []);
   useEffect(() => {
     if (dateRef.current.value === undefined) {
       const newObj = {
