@@ -5,7 +5,7 @@ import {
   IonToolbar,
   IonText,
 } from "@ionic/react";
-import { useEffect, useState, useRef } from "react";
+import { useState } from "react";
 import { VictoryLine, VictoryChart, VictoryAxis, VictoryTheme } from "victory";
 import { useStorage } from "../hooks/useStorage";
 import { getMonth, getYear } from "../utils/getDate";
