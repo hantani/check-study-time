@@ -1,3 +1,24 @@
+@font-face {
+  font-family: "Noto Sans KR";
+  src: url("./assets/fonts/NotoSansKR-Regular.ttf") format("truetype");
+  font-weight: 400;
+}
+@font-face {
+  font-family: "Noto Sans KR";
+  src: url("./assets/fonts/NotoSansKR-Medium.ttf") format("truetype");
+  font-weight: 500;
+}
+@font-face {
+  font-family: "Noto Sans KR";
+  src: url("./assets/fonts/NotoSansKR-Bold.ttf") format("truetype");
+  font-weight: 500;
+}
+
+body * {
+  font-family: "Noto Sans KR";
+  font-weight: 400;
+}
+
 ul {
   padding-left: 0;
 }
@@ -7,13 +28,17 @@ ul > li {
 
 .custom-saying {
   line-height: 1.5;
+  margin-bottom: 50px;
 }
 
 .custom-heading {
   font-size: 20px;
-  font-weight: 700;
+  font-weight: 500;
   margin: 0;
   margin-bottom: 16px;
+}
+.custom-heading.no-margin {
+  margin-bottom: 0;
 }
 
 .custom-text-area {
@@ -26,7 +51,7 @@ ul > li {
 
 .custom-btn-wrapper {
   margin-top: 16px;
-  margin-bottom: 40px;
+  margin-bottom: 50px;
   text-align: center;
 }
 .custom-btn-wrapper.type-02 {
@@ -34,7 +59,10 @@ ul > li {
 }
 
 .custom-today-study-record {
-  margin-bottom: 40px;
+  margin-bottom: 50px;
+}
+.custom-today-study-record.more-margin {
+  margin-bottom: 70px;
 }
 .custom-today-study-record > ul > li ion-card-title {
   font-size: 20px;
@@ -42,7 +70,7 @@ ul > li {
 }
 
 .custom-today-study-time {
-  padding-bottom: 50px;
+  padding-bottom: 70px;
 }
 
 .custom-progress-desc {
@@ -70,11 +98,15 @@ ul > li {
   font-size: 30px;
 }
 
+.custom-average {
+  margin-bottom: 70px;
+}
+
 .custom-average .custom-title {
-  font-weight: 700;
+  font-weight: 500;
   margin-right: 5px;
 }
 
 .custom-time {
-  font-weight: 700;
+  font-weight: 500;
 }

@@ -55,14 +55,14 @@ const Form = memo(
           <IonItem>
             <IonInput
               label="공부한 과목"
-              placeholder="공부한 과목"
+              placeholder="과목명을 적어주세요"
               ref={subjectRef}
             ></IonInput>
           </IonItem>
           <IonItem>
             <IonTextarea
               label="공부한 내용"
-              placeholder="공부한 내용"
+              placeholder="공부한 내용을 적어주세요"
               className="custom-text-area"
               ref={textAreaRef}
             ></IonTextarea>

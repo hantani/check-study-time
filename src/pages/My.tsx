@@ -56,7 +56,9 @@ const My: React.FC = () => {
       </IonHeader>
       <IonContent className="ion-padding">
         <div className="custom-year-bar">
-          <p className="custom-heading">{currentYear}년 월별 공부기록</p>
+          <p className="custom-heading no-margin">
+            {currentYear}년 월별 공부기록
+          </p>
           <VictoryChart domainPadding={20} theme={VictoryTheme.material}>
             <VictoryAxis tickValues={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]} />
             <VictoryAxis dependentAxis />

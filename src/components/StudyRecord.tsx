@@ -33,7 +33,7 @@ const StudyRecord = memo(
     }, [date, studyTimes]);
 
     return (
-      <div className="custom-today-study-record">
+      <div className="custom-today-study-record more-margin">
         {date && (
           <p className="custom-heading">
             {date.year}년 {date.month}월 {date.day}일의 기록

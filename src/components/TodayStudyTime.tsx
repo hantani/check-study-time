@@ -39,7 +39,7 @@ const TodayStudyTime = memo(
         <IonItem>
           <IonInput
             label="목표 공부시간"
-            placeholder="목표 공부시간"
+            placeholder="숫자로 적어주세요"
             type="number"
             ref={goalTimeRef}
           ></IonInput>

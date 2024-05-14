@@ -1,4 +1,3 @@
-import { IonText } from "@ionic/react";
 import React, { memo } from "react";
 
 const WiseSaying = memo(({ saying }: { saying: string | undefined }) => {
